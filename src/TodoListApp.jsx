@@ -8,7 +8,7 @@ import TodoAdder from "./components/TodoAdder.jsx";
 import TodoItem from "./components/TodoItem.jsx";
 import TodoList from "./components/TodoList.jsx";
 
-class  Todo {
+class Todo {
     constructor(id, text, isCompleted) {
         this.id = id;
         this.text = text;
@@ -33,7 +33,7 @@ function TodoListApp() {
         <div className="todo">
             <TodoHeader><h1>ToDoToDo</h1></TodoHeader>
             <TodoAdder addTodo={addTodo} />
-            <TodoList/>
+            <TodoList todos={todos} />
         </div>
     );
 }
