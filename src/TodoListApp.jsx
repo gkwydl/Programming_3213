@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./todolist.css"
 import Button from "./components/Button.jsx"
 import CheckBox from "./components/CheckBox.jsx";
@@ -15,15 +15,30 @@ class Todo {
         this.isCompleted = isCompleted;
     }
 }
+
+const TODOS_STORAGE_KEY = "todos";  // LocalStorage용 key
+
 function TodoListApp() {
-    const [todos, setTodos] = useState([]);
+    const initTodos = () => {
+        // localStorage에서 가져오기
+        const savedTodos = localStorage.getItem(TODOS_STORAGE_KEY);
+        // 값이 없으면 []
+        // 값이 있으면 todos의 초기값 대입하기
+        return (!savedTodos) ? [] : JSON.parse(savedTodos); // string => JSON 객체 또는 리스트
+    }
+
+    const [todos, setTodos] = useState(initTodos);
+    // todos 변경 시, localStorage에 todos 저장하기
+    useEffect(() => {
+        localStorage.setItem(TODOS_STORAGE_KEY, JSON.stringify(todos)); // JSON 객체 또는 리스트 -> string 
+    }, [todos]);
 
     function addTodo(text) {
         setTodos((todos) => [
             ...todos,
             new Todo(
-                Date.now(), 
-                text, 
+                Date.now(),
+                text,
                 false
             )
         ]);
@@ -45,11 +60,20 @@ function TodoListApp() {
         )
     }
 
+    function editTodo(id, newText) {
+        // todos 하나씩 꺼내어 todo.id가 같으면 text: newText
+        setTodos((todos) =>
+            todos.map((todo) =>
+                todo.id === id ? { ...todo, text: newText } : todo
+            )
+        )
+    }
+
     return (
         <div className="todo">
-            <TodoHeader/>
+            <TodoHeader />
             <TodoAdder addTodo={addTodo} />
-            <TodoList todos={todos} toggleTodo={toggleTodo} deleteTodo={deleteTodo} />
+            <TodoList todos={todos} toggleTodo={toggleTodo} deleteTodo={deleteTodo} editTodo={editTodo} />
         </div>
     );
 }
