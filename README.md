@@ -38,3 +38,4 @@ npm create vite@latest .
 - ```javascript
   <Link to="/"></Link>
   ```
+- 3213 임하정 1-1	날짜 표시?	★	Date, 컴포넌트 렌더링
