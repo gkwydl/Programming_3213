@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./todolist.css"
 import Button from "./components/Button.jsx"
 import CheckBox from "./components/CheckBox.jsx";
@@ -7,12 +7,14 @@ import TodoHeader from "./components/TodoHeader.jsx";
 import TodoAdder from "./components/TodoAdder.jsx";
 import TodoItem from "./components/TodoItem.jsx";
 import TodoList from "./components/TodoList.jsx";
+import bgm from "./assets/audio/Tbgm.mp3";
 
 class Todo {
-    constructor(id, text, isCompleted) {
+    constructor(id, text, isCompleted, updatedAt) {
         this.id = id;
         this.text = text;
         this.isCompleted = isCompleted;
+        this.updatedAt = updatedAt;
     }
 }
 
@@ -28,10 +30,19 @@ function TodoListApp() {
     }
 
     const [todos, setTodos] = useState(initTodos);
+
+    // theme 상태 
+    const [theme, setTheme] = useState("default");
     // todos 변경 시, localStorage에 todos 저장하기
+
+    // bgm 재생
+    const audioRef = useRef(null);
+    const [isPlaying, setIsPlaying] = useState(false);
+
     useEffect(() => {
         localStorage.setItem(TODOS_STORAGE_KEY, JSON.stringify(todos)); // JSON 객체 또는 리스트 -> string 
-    }, [todos]);
+        document.body.setAttribute("data-theme", theme);
+    }, [todos, theme]);
 
     function addTodo(text) {
         setTodos((todos) => [
@@ -39,7 +50,8 @@ function TodoListApp() {
             new Todo(
                 Date.now(),
                 text,
-                false
+                false,
+                getDate()
             )
         ]);
     }
@@ -59,15 +71,32 @@ function TodoListApp() {
             todos.filter((todo) => todo.id !== id)
         )
     }
-
     function editTodo(id, newText) {
         // todos 하나씩 꺼내어 todo.id가 같으면 text: newText
         setTodos((todos) =>
             todos.map((todo) =>
-                todo.id === id ? { ...todo, text: newText } : todo
+                todo.id === id
+                    ? { ...todo, text: newText, updatedAt: getDate() }
+                    : todo
             )
-        )
+        );
     }
+
+    function getDate() {
+        const date = new Date();
+        return date.toLocaleString();
+    }
+
+    function toggleMusic() {
+    if (!audioRef.current) return;
+
+    if (isPlaying) {
+        audioRef.current.pause();
+    } else {
+        audioRef.current.play();
+    }
+    setIsPlaying(!isPlaying);
+}
 
     return (
         <div className="todo">
