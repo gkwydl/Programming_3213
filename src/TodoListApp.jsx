@@ -9,10 +9,11 @@ import TodoItem from "./components/TodoItem.jsx";
 import TodoList from "./components/TodoList.jsx";
 
 class Todo {
-    constructor(id, text, isCompleted) {
+    constructor(id, text, isCompleted, updatedAt) {
         this.id = id;
         this.text = text;
         this.isCompleted = isCompleted;
+        this.updatedAt = updatedAt;
     }
 }
 
@@ -28,10 +29,12 @@ function TodoListApp() {
     }
 
     const [todos, setTodos] = useState(initTodos);
+    const [theme, setTheme] = useState("default");
     // todos 변경 시, localStorage에 todos 저장하기
     useEffect(() => {
         localStorage.setItem(TODOS_STORAGE_KEY, JSON.stringify(todos)); // JSON 객체 또는 리스트 -> string 
-    }, [todos]);
+        document.body.setAttribute("data-theme", theme);
+    }, [todos, theme]);
 
     function addTodo(text) {
         setTodos((todos) => [
@@ -39,7 +42,8 @@ function TodoListApp() {
             new Todo(
                 Date.now(),
                 text,
-                false
+                false,
+                getDate()
             )
         ]);
     }
@@ -59,14 +63,20 @@ function TodoListApp() {
             todos.filter((todo) => todo.id !== id)
         )
     }
-
     function editTodo(id, newText) {
         // todos 하나씩 꺼내어 todo.id가 같으면 text: newText
         setTodos((todos) =>
             todos.map((todo) =>
-                todo.id === id ? { ...todo, text: newText } : todo
+                todo.id === id
+                    ? { ...todo, text: newText, updatedAt: getDate() }
+                    : todo
             )
-        )
+        );
+    }
+
+    function getDate() {
+        const date = new Date();
+        return date.toLocaleString();
     }
 
     return (
