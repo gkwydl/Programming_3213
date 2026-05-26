@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import "./todolist.css"
 import Button from "./components/Button.jsx"
 import CheckBox from "./components/CheckBox.jsx";
@@ -7,6 +7,7 @@ import TodoHeader from "./components/TodoHeader.jsx";
 import TodoAdder from "./components/TodoAdder.jsx";
 import TodoItem from "./components/TodoItem.jsx";
 import TodoList from "./components/TodoList.jsx";
+import bgm from "./assets/audio/Tbgm.mp3";
 
 class Todo {
     constructor(id, text, isCompleted, updatedAt) {
@@ -29,8 +30,15 @@ function TodoListApp() {
     }
 
     const [todos, setTodos] = useState(initTodos);
+
+    // theme 상태 
     const [theme, setTheme] = useState("default");
     // todos 변경 시, localStorage에 todos 저장하기
+
+    // bgm 재생
+    const audioRef = useRef(null);
+    const [isPlaying, setIsPlaying] = useState(false);
+
     useEffect(() => {
         localStorage.setItem(TODOS_STORAGE_KEY, JSON.stringify(todos)); // JSON 객체 또는 리스트 -> string 
         document.body.setAttribute("data-theme", theme);
@@ -78,6 +86,17 @@ function TodoListApp() {
         const date = new Date();
         return date.toLocaleString();
     }
+
+    function toggleMusic() {
+    if (!audioRef.current) return;
+
+    if (isPlaying) {
+        audioRef.current.pause();
+    } else {
+        audioRef.current.play();
+    }
+    setIsPlaying(!isPlaying);
+}
 
     return (
         <div className="todo">

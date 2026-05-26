@@ -99,3 +99,22 @@
     margin-right: 8px;
     white-space: nowrap;
 }
+
+.todo__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.todo__title {
+    font-size: 28px;
+    font-weight: 800;
+}
+
+.todo__music-button {
+    font-size: 20px;
+    padding: 8px 12px;
+    border-radius: 8px;
+}
